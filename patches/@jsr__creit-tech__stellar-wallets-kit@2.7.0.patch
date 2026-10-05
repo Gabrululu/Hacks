@@ -1,0 +1,13 @@
+diff --git a/components/shared/button.js b/components/shared/button.js
+index 8cfd42b5c9d34b4adabd7417bdf9e61297729a28..acc0a54f26a1ef4ae104663f3c0b3afe1a9a455b 100644
+--- a/components/shared/button.js
++++ b/components/shared/button.js
+@@ -20,7 +20,7 @@ export var ButtonShape = /*#__PURE__*/ function(ButtonShape) {
+   ButtonShape["icon"] = "icon";
+   return ButtonShape;
+ }({});
+-const defaultClasses = "flex items-center justify-center font-semibold easy-in-out transition leading-none";
++const defaultClasses = "flex items-center justify-center font-semibold ease-in-out transition leading-none";
+ export function Button({ size = ButtonSize.md, mode = ButtonMode.primary, shape = ButtonShape.regular, classes, styles, children, onClick }) {
+   const modeStyle = cx({
+     "border-none bg-primary text-primary-foreground shadow-default hover:opacity-70 focus:opacity-90": mode === ButtonMode.primary,

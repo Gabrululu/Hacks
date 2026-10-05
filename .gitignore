@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.env*
+!.env.example
+SPEC.md
+
+.convex/
+test-results/
+playwright-report/
