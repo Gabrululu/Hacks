@@ -65,4 +65,9 @@ The backend runs on Convex and the frontend on a Cloudflare Worker with static a
 4. In Cloudflare DNS for `mintedinpe.com`, add a proxied wildcard record for `*.hacks` so event subdomains reach the Worker. `hacks.mintedinpe.com` is attached as a custom domain on deploy.
 5. Run `pnpm deploy:prod`. It validates the production URLs, deploys Convex, builds the app and deploys the Worker with `CONVEX_URL`.
 
+Pushes to `main` deploy automatically through `.github/workflows/deploy.yml`, which runs the checks and then `pnpm deploy:prod`. It reads these settings from the `production` environment in GitHub Actions:
+
+- Secrets: `CONVEX_DEPLOY_KEY` (a production deploy key) and `CLOUDFLARE_API_TOKEN`.
+- Variables: `CLOUDFLARE_ACCOUNT_ID`, `VITE_CONVEX_URL`, `VITE_CONVEX_SITE_URL` and `VITE_WALLETCONNECT_PROJECT_ID`.
+
 Use `pnpm preview:worker` to run the built app inside the Worker runtime locally. Local development credentials and services are not production configuration.

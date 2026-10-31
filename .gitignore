@@ -10,3 +10,6 @@ playwright-report/
 
 .wrangler/
 .dev.vars*
+
+# Local copy of the Convex agent skills; the tracked copy lives in .agents/
+.claude/

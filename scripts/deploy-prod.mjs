@@ -14,6 +14,12 @@ for (const [name, pattern] of checks)
     );
 if (env.VITE_CONVEX_URL.replace(".convex.cloud", "") !== env.VITE_CONVEX_SITE_URL.replace(".convex.site", ""))
   throw new Error("VITE_CONVEX_URL and VITE_CONVEX_SITE_URL point to different deployments.");
+// In CI the deploy key selects the Convex deployment; it must match the URLs
+// baked into the frontend.
+const deployKey = process.env.CONVEX_DEPLOY_KEY;
+const deployment = new URL(env.VITE_CONVEX_URL).hostname.split(".")[0];
+if (deployKey && !deployKey.startsWith(`prod:${deployment}|`))
+  throw new Error(`CONVEX_DEPLOY_KEY is not a production key for ${deployment}.`);
 if (!env.VITE_WALLETCONNECT_PROJECT_ID)
   console.warn("VITE_WALLETCONNECT_PROJECT_ID is empty; WalletConnect will be hidden.");
 function run(command, args) {
