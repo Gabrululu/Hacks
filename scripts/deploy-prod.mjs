@@ -10,7 +10,7 @@ const checks = [
 for (const [name, pattern] of checks)
   if (!pattern.test(env[name] ?? ""))
     throw new Error(
-      `${name} in .env.production.local must be the production Convex URL.`,
+      `${name} must be the production Convex URL (set it in .env.production.local, or as a variable of the "production" environment in GitHub Actions).`,
     );
 if (env.VITE_CONVEX_URL.replace(".convex.cloud", "") !== env.VITE_CONVEX_SITE_URL.replace(".convex.site", ""))
   throw new Error("VITE_CONVEX_URL and VITE_CONVEX_SITE_URL point to different deployments.");
