@@ -57,4 +57,12 @@ Keep local environment files, signing keys, API tokens, and private deployment c
 
 ## Deployment
 
-Configure a hosted Convex deployment, the production wallet-authentication issuer and signing keys, HTTPS application domains, and any email provider settings required by your deployment. Set the matching public Convex URLs in the frontend hosting environment, then run `pnpm build` before deploying. Local development credentials and services are not production configuration.
+The backend runs on Convex and the frontend on a Cloudflare Worker with static assets (`wrangler.jsonc`). The Worker serves the SPA, renders `/api/og` share images and returns event previews to social crawlers on `/`, `/e/*` and event subdomains.
+
+1. Link the project to a Convex account (`pnpm exec convex login`, then `pnpm convex:dev` to create the cloud project) and log in to Cloudflare (`pnpm exec wrangler login`).
+2. Create `.env.production.local` with the production `VITE_CONVEX_URL`, `VITE_CONVEX_SITE_URL`, `VITE_WALLETCONNECT_PROJECT_ID` and `VITE_DEMO_MODE=false`. It overrides `.env.local` in production builds.
+3. Run `pnpm auth:setup:prod` once to generate the production signing keys on Convex. Set the remaining server variables (`SUPERADMIN_WALLETS`, `APP_URL`, Resend settings) with `pnpm exec convex env set --prod <NAME>`, piping secret values through stdin.
+4. In Cloudflare DNS for `mintedinpe.com`, add a proxied wildcard record for `*.hacks` so event subdomains reach the Worker. `hacks.mintedinpe.com` is attached as a custom domain on deploy.
+5. Run `pnpm deploy:prod`. It validates the production URLs, deploys Convex, builds the app and deploys the Worker with `CONVEX_URL`.
+
+Use `pnpm preview:worker` to run the built app inside the Worker runtime locally. Local development credentials and services are not production configuration.

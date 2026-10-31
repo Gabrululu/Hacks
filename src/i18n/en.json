@@ -247,6 +247,7 @@
   "Conectar wallet": "Connect wallet",
   "Conectar wallet para participar": "Connect wallet to participate",
   "Conexión cancelada. Puedes volver a intentarlo.": "Connection cancelled. You can try again.",
+  "Esta wallet solo admite Stellar Mainnet. Elige Mainnet e inténtalo otra vez.": "This wallet only supports Stellar Mainnet. Choose Mainnet and try again.",
   "Configuración": "Settings",
   "Configuración actualizada": "Settings updated",
   "Configuración del evento actualizada": "Event settings updated",

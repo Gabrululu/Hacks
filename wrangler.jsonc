@@ -1,0 +1,22 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "hacks",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    // Only these paths reach the Worker (OG images and crawler previews);
+    // everything else is served straight from the static assets.
+    "run_worker_first": ["/", "/e/*", "/api/*"]
+  },
+  "routes": [
+    { "pattern": "hacks.mintedinpe.com", "custom_domain": true },
+    // Event subdomains; needs a proxied wildcard DNS record for *.hacks.
+    { "pattern": "*.hacks.mintedinpe.com/*", "zone_name": "mintedinpe.com" }
+  ],
+  "observability": { "enabled": true }
+  // CONVEX_URL is passed by scripts/deploy-prod.mjs from .env.production.local.
+}

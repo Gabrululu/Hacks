@@ -11,6 +11,16 @@ export default defineConfig(({ mode }) => {
   };
   return {
     plugins: [react(), tailwindcss()],
+    resolve: {
+      alias: [
+        // @metamask/connect-stellar imports the kit by its npm name; the kit is
+        // installed from JSR under @creit-tech, which exports the same types.
+        {
+          find: /^@creit\.tech\/stellar-wallets-kit$/,
+          replacement: "@creit-tech/stellar-wallets-kit/types",
+        },
+      ],
+    },
     server: {
       // Vite 8 console forwarding crashes on Convex stacks without source filenames.
       // Browser devtools retain the original errors.

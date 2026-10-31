@@ -1,5 +1,6 @@
 allowBuilds:
   esbuild: true
+  workerd: true
   '@reown/appkit': false
   secp256k1: false
   bufferutil: false

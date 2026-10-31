@@ -199,7 +199,9 @@ export function WalletDialog({ onClose }: { onClose: () => void }) {
               )}
             </Button>
             <small className="wallet-supported">
-              {tr("Freighter · xBull · Albedo · LOBSTR · Rabet · Hana")}
+              {tr(
+                "Varial · MetaMask · xBull · Albedo · LOBSTR · Rabet · Hana · WalletConnect",
+              )}
             </small>
           </>
         )}

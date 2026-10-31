@@ -20,7 +20,6 @@
     "tests",
     "vite.config.ts",
     "playwright.config.ts",
-    "middleware.ts",
-    "api/**/*.tsx"
+    "worker"
   ]
 }

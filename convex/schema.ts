@@ -217,8 +217,8 @@ export default defineSchema({
       }),
     ),
     emailMonthlyLimit: v.optional(v.number()),
-    theme, // validar con el validador de tema en model/events.ts
-    blocks: v.array(block), // ídem, validador por tipo de bloque
+    theme,
+    blocks: v.array(block),
     presentationVersion: v.optional(v.number()),
     publicPhase: v.optional(v.string()),
     registrationOpen: v.optional(v.boolean()),

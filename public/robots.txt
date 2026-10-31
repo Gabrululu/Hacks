@@ -1,0 +1,18 @@
+# Public pages (home, events, galleries) stay crawlable. Private areas need a
+# session anyway; tokenized links must not be crawled or shared via search.
+User-agent: *
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /manage
+Disallow: /perfil
+Disallow: /onboarding
+Disallow: /preview
+Disallow: /register
+Disallow: /invite/
+Disallow: /join/
+Disallow: /unsubscribe/
+Disallow: /e/*/dashboard
+Disallow: /e/*/manage
+Disallow: /e/*/preview
+Disallow: /e/*/register
+Disallow: /e/*/join/

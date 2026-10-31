@@ -7,3 +7,6 @@ SPEC.md
 .convex/
 test-results/
 playwright-report/
+
+.wrangler/
+.dev.vars*

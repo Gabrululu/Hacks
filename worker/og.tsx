@@ -1,8 +1,6 @@
-import { ImageResponse } from "@vercel/og";
+import { ImageResponse, loadGoogleFont } from "workers-og";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../convex/_generated/api";
-
-export const config = { runtime: "edge" };
 
 const color = (candidate: string | undefined, fallback: string) =>
   candidate && /^#[0-9a-f]{6}$/i.test(candidate) ? candidate : fallback;
@@ -20,15 +18,30 @@ function allowedImage(url: string | undefined) {
   }
 }
 
-export default async function handler(request: Request) {
-  const url = new URL(request.url);
+// Fonts are fetched once per isolate and reused across requests.
+let fonts: Promise<{ name: string; data: ArrayBuffer; weight: 400 | 700 | 800; style: "normal" }[]> | undefined;
+function loadFonts() {
+  fonts ??= Promise.all(
+    ([400, 700, 800] as const).map(async (weight) => ({
+      name: "Inter",
+      data: await loadGoogleFont({ family: "Inter", weight }),
+      weight,
+      style: "normal" as const,
+    })),
+  ).catch((error) => {
+    fonts = undefined;
+    throw error;
+  });
+  return fonts;
+}
+
+export async function renderEventImage(url: URL, convexUrl: string | undefined) {
   const slug = url.searchParams.get("slug");
   let event: Awaited<ReturnType<ConvexHttpClient["query"]>> | null = null;
   if (slug && /^[a-z0-9][a-z0-9-]{0,62}$/.test(slug)) {
-    const address = process.env.CONVEX_URL || process.env.VITE_CONVEX_URL;
-    if (!address) return new Response("Convex is not configured", { status: 503 });
+    if (!convexUrl) return new Response("Convex is not configured", { status: 503 });
     try {
-      const client = new ConvexHttpClient(address);
+      const client = new ConvexHttpClient(convexUrl);
       event = await client.query(api.events.get, { slug });
     } catch (error) {
       console.error("Unable to render event share image", error);
@@ -48,10 +61,10 @@ export default async function handler(request: Request) {
   const logo = page?.theme?.logoId ? allowedImage(page.images?.[page.theme.logoId]) : undefined;
 
   return new ImageResponse(
-    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: 64, background, color: foreground, fontFamily: "sans-serif", position: "relative", overflow: "hidden" }}>
+    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: 64, background, color: foreground, fontFamily: "Inter", position: "relative", overflow: "hidden" }}>
       <div style={{ position: "absolute", right: -90, top: -150, width: 520, height: 520, borderRadius: 260, border: `2px solid ${accent}`, opacity: 0.22, display: "flex" }} />
       <div style={{ display: "flex", alignItems: "center", gap: 18, fontSize: 26, fontWeight: 700, letterSpacing: 1 }}>
-        {logo ? <img src={logo} width="64" height="64" style={{ objectFit: "contain", borderRadius: 12 }} /> : <span style={{ color: accent, fontSize: 54, lineHeight: 1 }}>✳</span>}
+        {logo ? <img src={logo} width="64" height="64" style={{ objectFit: "contain", borderRadius: 12 }} /> : <svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2.6" strokeLinecap="round"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9 4.9 19.1" /></svg>}
         <span>HACKS</span>
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 20, maxWidth: 1000, padding: 34, background: surface, borderRadius: 28, border: `1px solid ${accent}55` }}>
@@ -63,6 +76,6 @@ export default async function handler(request: Request) {
         <span>hacks.mintedinpe.com</span><span>BUILD SOMETHING THAT MATTERS</span>
       </div>
     </div>,
-    { width: 1200, height: 630, headers: { "Cache-Control": "public, max-age=0, s-maxage=3600, stale-while-revalidate=86400" } },
+    { width: 1200, height: 630, fonts: await loadFonts(), headers: { "Cache-Control": "public, max-age=0, s-maxage=3600, stale-while-revalidate=86400" } },
   );
 }

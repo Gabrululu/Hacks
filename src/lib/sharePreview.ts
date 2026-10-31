@@ -24,8 +24,7 @@ export function eventRefForUrl(url: URL): EventRef | null {
   return domainSlug && !domainSlug.includes(".") ? { domainSlug } : null;
 }
 
-export async function fetchPublicEvent(ref: EventRef): Promise<PublicEvent | null> {
-  const address = process.env.CONVEX_URL || process.env.VITE_CONVEX_URL;
+export async function fetchPublicEvent(ref: EventRef, address: string | undefined): Promise<PublicEvent | null> {
   if (!address) return null;
   try {
     const client = new ConvexHttpClient(address);

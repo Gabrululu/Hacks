@@ -69,6 +69,8 @@ function messageFor(error: unknown) {
     return "La autenticación no está configurada en el servidor.";
   if (/INVALID_CHALLENGE|INVALID_SIGNATURE/.test(message))
     return "No pudimos verificar la firma. Inicia la conexión otra vez.";
+  if (/MAINNET_ONLY_WALLET/.test(message))
+    return "Esta wallet solo admite Stellar Mainnet. Elige Mainnet e inténtalo otra vez.";
   if (/SESSION_EXPIRED/.test(message))
     return "La sesión expiró. Vuelve a conectar tu wallet.";
   if (/cancel|reject|declin|closed|denied/i.test(message))
@@ -256,12 +258,16 @@ export function AuthProvider({
       try {
         if (!client) throw new Error("AUTH_NOT_CONFIGURED");
         setStage("Elige tu wallet");
-        const { getWalletKit, Networks } = await import("./kit");
-        const kit = getWalletKit();
-        kit.setNetwork(
-          network === "testnet" ? Networks.TESTNET : Networks.PUBLIC,
+        const { setWalletNetwork, MAINNET_ONLY_WALLETS } = await import(
+          "./kit"
         );
+        const kit = setWalletNetwork(network);
         const { address } = await kit.authModal();
+        if (
+          network === "testnet" &&
+          MAINNET_ONLY_WALLETS.includes(kit.selectedModule.productId)
+        )
+          throw new Error("MAINNET_ONLY_WALLET");
         setStage("Preparando la firma");
         const challenge = await client.action(api.auth.createChallenge, {
           wallet: address,
