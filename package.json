@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "dev:stack": "convex dev --start 'pnpm dev'",
+    "dev:stack": "convex dev --start \"pnpm dev\"",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "convex:dev": "convex dev",
