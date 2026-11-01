@@ -3,7 +3,8 @@ import { spawnSync } from "node:child_process";
 import { generateKeyPair, exportPKCS8, exportJWK } from "jose";
 import { Keypair } from "@stellar/stellar-sdk";
 const contents = readFileSync(".env.local", "utf8");
-const deployment = /^CONVEX_DEPLOYMENT=(.+)$/m.exec(contents)?.[1]?.trim();
+// Convex appends "# team: ..., project: ..." to cloud deployments.
+const deployment = /^CONVEX_DEPLOYMENT=([^#\s]+)/m.exec(contents)?.[1];
 const site = /^VITE_CONVEX_SITE_URL=(.+)$/m.exec(contents)?.[1]?.trim();
 // Development only: an anonymous localhost backend or a cloud dev deployment.
 const isLocal =

@@ -2,7 +2,8 @@ import { readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { randomBytes } from "node:crypto";
 const env = readFileSync(".env.local", "utf8");
-const deployment = /^CONVEX_DEPLOYMENT=(.+)$/m.exec(env)?.[1]?.trim();
+// Convex appends "# team: ..., project: ..." to cloud deployments.
+const deployment = /^CONVEX_DEPLOYMENT=([^#\s]+)/m.exec(env)?.[1];
 const site = /^VITE_CONVEX_SITE_URL=(.+)$/m.exec(env)?.[1]?.trim();
 // Development only: an anonymous localhost backend or a cloud dev deployment.
 const isLocal =
