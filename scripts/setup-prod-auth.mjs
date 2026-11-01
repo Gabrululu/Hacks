@@ -10,13 +10,13 @@ if (!site || !/^https:\/\/[a-z0-9-]+\.convex\.site\/?$/.test(site))
   );
 // Secrets travel over stdin so they never appear in argv, logs or files.
 function convex(args, input) {
-  const result = spawnSync("pnpm", ["exec", "convex", ...args, "--prod"], {
+  const result = spawnSync(process.execPath, ["node_modules/convex/bin/main.js", ...args, "--prod"], {
     encoding: "utf8",
     input,
   });
   if (result.status !== 0)
     throw new Error(
-      `Convex ${args.slice(0, 2).join(" ")} failed; secrets withheld. ${result.stderr.replace(/-----BEGIN[\s\S]*?-----END[^-]+-----/g, "[redacted]")}`,
+      `Convex ${args.slice(0, 2).join(" ")} failed; secrets withheld. ${(result.stderr ?? String(result.error)).replace(/-----BEGIN[\s\S]*?-----END[^-]+-----/g, "[redacted]")}`,
     );
   return result.stdout.trim();
 }

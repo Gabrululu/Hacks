@@ -23,7 +23,11 @@ if (deployKey && !deployKey.startsWith(`prod:${deployment}|`))
 if (!env.VITE_WALLETCONNECT_PROJECT_ID)
   console.warn("VITE_WALLETCONNECT_PROJECT_ID is empty; WalletConnect will be hidden.");
 function run(command, args) {
-  const result = spawnSync(command, args, { stdio: "inherit" });
+  const result = spawnSync(command, args, {
+    stdio: "inherit",
+    // pnpm is pnpm.cmd on Windows, which Node only runs through a shell.
+    shell: process.platform === "win32",
+  });
   if (result.status !== 0) process.exit(result.status ?? 1);
 }
 // Backend first, so the new frontend never calls functions that are not live.

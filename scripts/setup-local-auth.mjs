@@ -12,13 +12,13 @@ const site = /^VITE_CONVEX_SITE_URL=(.+)$/m.exec(contents)?.[1]?.trim();
 if (!site || !["localhost", "127.0.0.1"].includes(new URL(site).hostname))
   throw new Error("Expected a localhost Convex site URL");
 function convex(args) {
-  const result = spawnSync("pnpm", ["exec", "convex", ...args], {
+  const result = spawnSync(process.execPath, ["node_modules/convex/bin/main.js", ...args], {
     encoding: "utf8",
     env: { ...process.env, CONVEX_DEPLOYMENT: deployment },
   });
   if (result.status !== 0)
     throw new Error(
-      `Convex ${args[0]} failed; secrets withheld. ${result.stderr.replace(/-----BEGIN[\s\S]*?-----END[^-]+-----/g, "[redacted]")}`,
+      `Convex ${args[0]} failed; secrets withheld. ${(result.stderr ?? String(result.error)).replace(/-----BEGIN[\s\S]*?-----END[^-]+-----/g, "[redacted]")}`,
     );
   return result.stdout.trim();
 }

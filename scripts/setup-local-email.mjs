@@ -14,7 +14,7 @@ if (
     "Only the existing anonymous localhost deployment is supported.",
   );
 function convex(args) {
-  const result = spawnSync("pnpm", ["exec", "convex", ...args], {
+  const result = spawnSync(process.execPath, ["node_modules/convex/bin/main.js", ...args], {
     encoding: "utf8",
     env: { ...process.env, CONVEX_DEPLOYMENT: deployment },
   });
