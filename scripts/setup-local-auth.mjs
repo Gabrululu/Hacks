@@ -4,13 +4,19 @@ import { generateKeyPair, exportPKCS8, exportJWK } from "jose";
 import { Keypair } from "@stellar/stellar-sdk";
 const contents = readFileSync(".env.local", "utf8");
 const deployment = /^CONVEX_DEPLOYMENT=(.+)$/m.exec(contents)?.[1]?.trim();
-if (!deployment?.startsWith("anonymous:") || process.env.CONVEX_DEPLOY_KEY)
-  throw new Error(
-    "This script only configures the existing anonymous local deployment.",
-  );
 const site = /^VITE_CONVEX_SITE_URL=(.+)$/m.exec(contents)?.[1]?.trim();
-if (!site || !["localhost", "127.0.0.1"].includes(new URL(site).hostname))
-  throw new Error("Expected a localhost Convex site URL");
+// Development only: an anonymous localhost backend or a cloud dev deployment.
+const isLocal =
+  deployment?.startsWith("anonymous:") &&
+  site &&
+  ["localhost", "127.0.0.1"].includes(new URL(site).hostname);
+const isCloudDev =
+  deployment?.startsWith("dev:") &&
+  site === `https://${deployment.slice(4)}.convex.site`;
+if ((!isLocal && !isCloudDev) || process.env.CONVEX_DEPLOY_KEY)
+  throw new Error(
+    "This script only configures a development deployment (anonymous local or cloud dev).",
+  );
 function convex(args) {
   const result = spawnSync(process.execPath, ["node_modules/convex/bin/main.js", ...args], {
     encoding: "utf8",
